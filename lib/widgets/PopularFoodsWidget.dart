@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:PattyApp/animations/ScaleRoute.dart';
 import 'package:PattyApp/pages/FoodDetailsPage.dart';
 import 'package:flutter/material.dart';
+import '../providerModels/product.dart';
+
+import 'package:http/http.dart' as http;
 
 class PopularFoodsWidget extends StatefulWidget {
   @override
@@ -8,6 +13,28 @@ class PopularFoodsWidget extends StatefulWidget {
 }
 
 class _PopularFoodsWidgetState extends State<PopularFoodsWidget> {
+  List<Product> products = [];
+  bool isLoading = true;
+  @override
+  void initState() {
+    _getFoods();
+    super.initState();
+  }
+
+  void _getFoods() async {
+    var url = Uri.parse('http://10.0.2.2:3000/api/products');
+
+    var response = await http.get(url);
+
+    final parsed =
+        jsonDecode(response.body)['product'].cast<Map<String, dynamic>>();
+    products = parsed.map<Product>((json) => Product.fromJson(json)).toList();
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +44,11 @@ class _PopularFoodsWidgetState extends State<PopularFoodsWidget> {
         children: <Widget>[
           PopularFoodTitle(),
           Expanded(
-            child: PopularFoodItems(),
+            child: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : PopularFoodItems(this.products),
           )
         ],
       ),
@@ -240,17 +271,12 @@ class PopularFoodTitle extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            "Popluar Foods",
+            "Foods",
             style: TextStyle(
                 fontSize: 20,
                 color: Color(0xFF3a3a3b),
                 fontWeight: FontWeight.w300),
           ),
-          Text(
-            "See all",
-            style: TextStyle(
-                fontSize: 16, color: Colors.blue, fontWeight: FontWeight.w100),
-          )
         ],
       ),
     );
@@ -258,75 +284,28 @@ class PopularFoodTitle extends StatelessWidget {
 }
 
 class PopularFoodItems extends StatelessWidget {
+  List<Product> products;
+
+  PopularFoodItems(this.products);
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      children: <Widget>[
-        PopularFoodTiles(
-            name: "Fried Egg",
-            imageUrl: "ic_popular_food_1",
-            rating: '4.9',
-            numberOfRating: '200',
-            price: '15.06',
-            slug: "fried_egg"),
-        PopularFoodTiles(
-            name: "Mixed Vegetable",
-            imageUrl: "ic_popular_food_3",
-            rating: "4.9",
-            numberOfRating: "100",
-            price: "17.03",
-            slug: ""),
-        PopularFoodTiles(
-            name: "Salad With Chicken",
-            imageUrl: "ic_popular_food_4",
-            rating: "4.0",
-            numberOfRating: "50",
-            price: "11.00",
-            slug: ""),
-        PopularFoodTiles(
-            name: "Mixed Salad",
-            imageUrl: "ic_popular_food_5",
-            rating: "4.00",
-            numberOfRating: "100",
-            price: "11.10",
-            slug: ""),
-        PopularFoodTiles(
-            name: "Red meat,Salad",
-            imageUrl: "ic_popular_food_2",
-            rating: "4.6",
-            numberOfRating: "150",
-            price: "12.00",
-            slug: ""),
-        PopularFoodTiles(
-            name: "Mixed Salad",
-            imageUrl: "ic_popular_food_5",
-            rating: "4.00",
-            numberOfRating: "100",
-            price: "11.10",
-            slug: ""),
-        PopularFoodTiles(
-            name: "Potato,Meat fry",
-            imageUrl: "ic_popular_food_6",
-            rating: "4.2",
-            numberOfRating: "70",
-            price: "23.0",
-            slug: ""),
-        PopularFoodTiles(
-            name: "Fried Egg",
-            imageUrl: "ic_popular_food_1",
-            rating: '4.9',
-            numberOfRating: '200',
-            price: '15.06',
-            slug: "fried_egg"),
-        PopularFoodTiles(
-            name: "Red meat,Salad",
-            imageUrl: "ic_popular_food_2",
-            rating: "4.6",
-            numberOfRating: "150",
-            price: "12.00",
-            slug: ""),
-      ],
-    );
+    return this.products.length == 0
+        ? Center(
+            child: Text('There are no products!'),
+          )
+        : ListView(
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+              for (var i in this.products)
+                PopularFoodTiles(
+                    name: i.name,
+                    imageUrl: i.imagePath,
+                    rating: '4.9',
+                    numberOfRating: '200',
+                    price: '15.06',
+                    slug: "fried_egg"),
+            ],
+          );
   }
 }
