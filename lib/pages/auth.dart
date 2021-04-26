@@ -41,6 +41,7 @@ class Auth extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
+      title: "PATTY APP",
       onSignup: _signupUser,
       onLogin: _loginUser,
       hideForgotPasswordButton: true,

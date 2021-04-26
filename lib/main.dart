@@ -1,4 +1,4 @@
-import 'package:PattyApp/auth.dart';
+import 'package:PattyApp/pages/auth.dart';
 import 'package:flutter/material.dart';
 
 void main() {
