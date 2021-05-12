@@ -22,7 +22,7 @@ class _PopularFoodsWidgetState extends State<PopularFoodsWidget> {
   }
 
   void _getFoods() async {
-    var url = Uri.parse('http://10.0.2.2:3000/api/products');
+    var url = Uri.parse('http://localhost:3000/api/products');
 
     var response = await http.get(url);
 
