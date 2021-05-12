@@ -1,4 +1,5 @@
 class Product {
+  final String id;
   final String seller;
   final String name;
   final String imagePath;
@@ -9,7 +10,8 @@ class Product {
   final int sold;
 
   Product(
-      {this.seller,
+      {this.id,
+      this.seller,
       this.name,
       this.imagePath,
       this.category,
@@ -20,6 +22,7 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
+        id: json['_id'] as String,
         seller: json['seller'] as String,
         name: json['name'] as String,
         imagePath: json['imagePath'] as String,

@@ -1,62 +1,95 @@
+import 'dart:convert';
+
 import 'package:PattyApp/animations/ScaleRoute.dart';
 import 'package:PattyApp/pages/FoodOrderPage.dart';
 import 'package:flutter/material.dart';
+import '../providerModels/product.dart';
+
+import 'package:http/http.dart' as http;
 
 class FoodDetailsPage extends StatefulWidget {
+  String id;
+
+  FoodDetailsPage(this.id);
   @override
   _FoodDetailsPageState createState() => _FoodDetailsPageState();
 }
 
 class _FoodDetailsPageState extends State<FoodDetailsPage> {
+  Product _product;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    _getProduct();
+    super.initState();
+  }
+
+  _getProduct() async {
+    var url = Uri.parse('http://10.0.2.2:3000/api/products/${widget.id}');
+
+    var response = await http.get(url);
+
+    _product = Product.fromJson(jsonDecode(response.body)['product']);
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Color(0xFFFAFAFA),
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Color(0xFF3a3737),
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          brightness: Brightness.light,
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(
-                  Icons.business_center,
-                  color: Color(0xFF3a3737),
+    return isLoading
+        ? Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          )
+        : DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                backgroundColor: Color(0xFFFAFAFA),
+                elevation: 0,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Color(0xFF3a3737),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-                onPressed: () {
-                  Navigator.push(context, ScaleRoute(page: FoodOrderPage()));
-                })
-          ],
-        ),
-        body: Container(
-          padding: EdgeInsets.only(
-            left: 15,
-            right: 15,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Card(
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: Image.asset(
-                  'assets/images/bestfood/' + 'ic_best_food_8' + ".jpeg",
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(3.0),
-                ),
-                elevation: 1,
-                margin: EdgeInsets.all(5),
+                brightness: Brightness.light,
+                actions: <Widget>[
+                  IconButton(
+                      icon: Icon(
+                        Icons.business_center,
+                        color: Color(0xFF3a3737),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context, ScaleRoute(page: FoodOrderPage()));
+                      })
+                ],
               ),
-              /*  Container(
+              body: Container(
+                padding: EdgeInsets.only(
+                  left: 15,
+                  right: 15,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: Image.network(
+                        this._product.imagePath,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3.0),
+                      ),
+                      elevation: 1,
+                      margin: EdgeInsets.all(5),
+                    ),
+                    /*  Container(
                 height: 150,
                 child:FoodDetailsSlider(
                     slideImage1: "assets/images/bestfood/ic_best_food_8.jpeg",
@@ -64,58 +97,58 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
                     slideImage3: "assets/images/bestfood/ic_best_food_10.jpeg"),
               ),*/
 
-              FoodTitleWidget(
-                  productName: "Grilled Salmon",
-                  productPrice: "\$96.00",
-                  productHost: "pizza hut"),
-              SizedBox(
-                height: 15,
-              ),
-              AddToCartMenu(),
-              SizedBox(
-                height: 15,
-              ),
-              PreferredSize(
-                preferredSize: Size.fromHeight(50.0),
-                child: TabBar(
-                  labelColor: Color(0xFFfd3f40),
-                  indicatorColor: Color(0xFFfd3f40),
-                  unselectedLabelColor: Color(0xFFa4a1a1),
-                  indicatorSize: TabBarIndicatorSize.label,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
-                  tabs: [
-                    Tab(
-                      text: 'Food Details',
+                    FoodTitleWidget(
+                        productName: this._product.name,
+                        productPrice: this._product.price.toString(),
+                        productHost: this._product.seller),
+                    SizedBox(
+                      height: 15,
                     ),
-                    Tab(
-                      text: 'Food Reviews',
+                    AddToCartMenu(),
+                    SizedBox(
+                      height: 15,
                     ),
-                  ], // list of tabs
-                ),
-              ),
-              Container(
-                height: 150,
-                child: TabBarView(
-                  children: [
-                    Container(
-                      color: Colors.white24,
-                      child: DetailContentMenu(),
+                    PreferredSize(
+                      preferredSize: Size.fromHeight(50.0),
+                      child: TabBar(
+                        labelColor: Color(0xFFfd3f40),
+                        indicatorColor: Color(0xFFfd3f40),
+                        unselectedLabelColor: Color(0xFFa4a1a1),
+                        indicatorSize: TabBarIndicatorSize.label,
+                        labelStyle: TextStyle(
+                          fontWeight: FontWeight.w500,
+                        ),
+                        tabs: [
+                          Tab(
+                            text: 'Food Details',
+                          ),
+                          Tab(
+                            text: 'Food Reviews',
+                          ),
+                        ], // list of tabs
+                      ),
                     ),
                     Container(
-                      color: Colors.white24,
-                      child: DetailContentMenu(),
-                    ), // class name
+                      height: 150,
+                      child: TabBarView(
+                        children: [
+                          Container(
+                            color: Colors.white24,
+                            child: DetailContentMenu(),
+                          ),
+                          Container(
+                            color: Colors.white24,
+                            child: DetailContentMenu(),
+                          ), // class name
+                        ],
+                      ),
+                    ),
+                    BottomMenu(),
                   ],
                 ),
               ),
-              BottomMenu(),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
 
