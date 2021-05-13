@@ -1,7 +1,13 @@
+import 'package:PattyApp/animations/ScaleRoute.dart';
+import 'package:PattyApp/pages/home.dart';
+import 'package:PattyApp/pages/sellersPage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavBarWidget extends StatefulWidget {
+  int _selectedIndex;
+  BottomNavBarWidget(@required this._selectedIndex);
+
   @override
   _BottomNavBarWidgetState createState() => _BottomNavBarWidgetState();
 }
@@ -9,11 +15,17 @@ class BottomNavBarWidget extends StatefulWidget {
 class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
   @override
   Widget build(BuildContext context) {
-    int _selectedIndex = 0;
     void _onItemTapped(int index) {
       setState(() {
-        _selectedIndex = index;
-//        navigateToScreens(index);
+        switch (index) {
+          case 0:
+            Navigator.pop(context);
+            break;
+          case 1:
+            Navigator.push(context, ScaleRoute(page: SellersPage()));
+            break;
+          default:
+        }
       });
     }
 
@@ -49,7 +61,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
           ),
         ),
       ],
-      currentIndex: _selectedIndex,
+      currentIndex: widget._selectedIndex,
       selectedItemColor: Color(0xFFfd5352),
       onTap: _onItemTapped,
     );

@@ -7,6 +7,7 @@ import 'package:PattyApp/animations/ScaleRoute.dart';
 import 'package:PattyApp/pages/auth.dart';
 
 class Home extends StatefulWidget {
+  static const routeName = '/home';
   @override
   _HomeState createState() => _HomeState();
 }
@@ -32,7 +33,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBarWidget(),
+      bottomNavigationBar: BottomNavBarWidget(0),
     );
   }
 }
