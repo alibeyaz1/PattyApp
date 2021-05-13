@@ -43,7 +43,7 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
             body: Center(child: CircularProgressIndicator()),
           )
         : DefaultTabController(
-            length: 2,
+            length: 1,
             child: Scaffold(
               backgroundColor: Colors.white,
               appBar: AppBar(
@@ -122,9 +122,6 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
                           Tab(
                             text: 'Food Details',
                           ),
-                          Tab(
-                            text: 'Food Reviews',
-                          ),
                         ], // list of tabs
                       ),
                     ),
@@ -134,16 +131,11 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
                         children: [
                           Container(
                             color: Colors.white24,
-                            child: DetailContentMenu(),
-                          ),
-                          Container(
-                            color: Colors.white24,
-                            child: DetailContentMenu(),
+                            child: DetailContentMenu(this._product.description),
                           ), // class name
                         ],
                       ),
                     ),
-                    BottomMenu(),
                   ],
                 ),
               ),
@@ -213,96 +205,6 @@ class FoodTitleWidget extends StatelessWidget {
   }
 }
 
-class BottomMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Icon(
-                Icons.timelapse,
-                color: Color(0xFF404aff),
-                size: 35,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "12pm-3pm",
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFa9a9a9),
-                    fontWeight: FontWeight.w300),
-              )
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              Icon(
-                Icons.directions,
-                color: Color(0xFF23c58a),
-                size: 35,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "3.5 km",
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFa9a9a9),
-                    fontWeight: FontWeight.w300),
-              )
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              Icon(
-                Icons.map,
-                color: Color(0xFFff0654),
-                size: 35,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "Map View",
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFa9a9a9),
-                    fontWeight: FontWeight.w300),
-              )
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              Icon(
-                Icons.directions_bike,
-                color: Color(0xFFe95959),
-                size: 35,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "Delivery",
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFa9a9a9),
-                    fontWeight: FontWeight.w300),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class AddToCartMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -352,11 +254,14 @@ class AddToCartMenu extends StatelessWidget {
 }
 
 class DetailContentMenu extends StatelessWidget {
+  String description;
+
+  DetailContentMenu(@required this.description);
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Text(
-        'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.',
+        this.description,
         style: TextStyle(
             fontSize: 14.0,
             color: Colors.black87,

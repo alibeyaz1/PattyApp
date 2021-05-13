@@ -30,7 +30,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
         BottomNavigationBarItem(
           icon: Icon(Icons.near_me),
           title: Text(
-            'Near By',
+            'Sellers',
             style: TextStyle(color: Color(0xFF2c2b2b)),
           ),
         ),
