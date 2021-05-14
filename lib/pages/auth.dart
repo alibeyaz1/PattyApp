@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:PattyApp/pages/admin/screens/main/main_screen.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
 class Auth extends StatelessWidget {
+  bool isSeller = false;
   Future<String> _signupUser(LoginData data) async {
     print('Name: ${data.name}, Password: ${data.password}');
 
@@ -26,6 +28,8 @@ class Auth extends StatelessWidget {
       final prefs = await SharedPreferences.getInstance();
 
       prefs.setString('token', jsonDecode(response.body)["token"]);
+      prefs.setBool('isSeller', jsonDecode(response.body)["isSeller"]);
+      isSeller = prefs.get('isSeller');
     }
 
     return "";
@@ -46,6 +50,8 @@ class Auth extends StatelessWidget {
       final prefs = await SharedPreferences.getInstance();
 
       prefs.setString('token', jsonDecode(response.body)["token"]);
+      prefs.setBool('isSeller', jsonDecode(response.body)["isSeller"]);
+      isSeller = prefs.get('isSeller');
     }
 
     return jsonDecode(response.body)["message"];
@@ -60,7 +66,7 @@ class Auth extends StatelessWidget {
       hideForgotPasswordButton: true,
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => Home(),
+          builder: (context) => this.isSeller ? MainScreen() : Home(),
         ));
       },
     );

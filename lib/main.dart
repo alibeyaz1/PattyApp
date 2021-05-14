@@ -1,3 +1,4 @@
+import 'package:PattyApp/pages/admin/screens/main/main_screen.dart';
 import 'package:PattyApp/pages/auth.dart';
 import 'package:PattyApp/pages/home.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoggedIn = true;
+  bool isSeller = false;
   bool isLoading = false;
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final prefs = await SharedPreferences.getInstance();
 
     isLoggedIn = prefs.containsKey('token');
+    isSeller = prefs.get('isSeller');
     setState(() {
       isLoading = false;
     });
@@ -57,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: CircularProgressIndicator(),
           ))
         : Scaffold(
-            body: isLoggedIn ? Home() : Auth(),
+            body: isLoggedIn ? (isSeller ? MainScreen() : Home()) : Auth(),
           );
   }
 }
