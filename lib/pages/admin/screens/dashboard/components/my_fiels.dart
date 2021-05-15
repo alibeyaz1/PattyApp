@@ -1,3 +1,4 @@
+import 'package:PattyApp/animations/ScaleRoute.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../add_food.dart';
@@ -8,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../../constants.dart';
+import '../../admin_account.dart';
 import 'file_info_card.dart';
 
 class MyFiels extends StatelessWidget {
@@ -36,7 +38,7 @@ class MyFiels extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => add_food()),
                 );
@@ -44,6 +46,11 @@ class MyFiels extends StatelessWidget {
               icon: Icon(Icons.add),
               label: Text("Add New Food"),
             ),
+            IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.push(context, ScaleRoute(page: AdminAccountPage()));
+                }),
           ],
         ),
         SizedBox(height: defaultPadding),
@@ -86,9 +93,13 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
   }
 
   getData() async {
-    var url = Uri.parse('http://localhost:3000/api/orders/count?filter=daily');
+    final prefs = await SharedPreferences.getInstance();
 
-    var response = await http.get(url);
+    String token = prefs.get("token");
+
+    var url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=daily');
+
+    var response = await http.get(url, headers: {'token': token});
 
     int count = jsonDecode(response.body)['orderCount'];
     dynamic total = jsonDecode(response.body)['orderTotal'];
@@ -100,9 +111,9 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       color: primaryColor,
     ));
 
-    url = Uri.parse('http://localhost:3000/api/orders/count?filter=weekly');
+    url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=weekly');
 
-    response = await http.get(url);
+    response = await http.get(url, headers: {'token': token});
 
     count = jsonDecode(response.body)['orderCount'];
     total = jsonDecode(response.body)['orderTotal'];
@@ -114,9 +125,9 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       color: primaryColor,
     ));
 
-    url = Uri.parse('http://localhost:3000/api/orders/count?filter=monthly');
+    url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=monthly');
 
-    response = await http.get(url);
+    response = await http.get(url, headers: {'token': token});
 
     count = jsonDecode(response.body)['orderCount'];
     total = jsonDecode(response.body)['orderTotal'];
@@ -128,10 +139,7 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       color: primaryColor,
     ));
 
-    final prefs = await SharedPreferences.getInstance();
-
-    String token = prefs.get("token");
-    url = Uri.parse('http://localhost:3000/api/orders/count?filter=all');
+    url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=all');
 
     response = await http.get(url, headers: {'token': token});
 

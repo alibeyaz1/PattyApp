@@ -20,7 +20,7 @@ class _BestFoodWidgetState extends State<BestFoodWidget> {
   }
 
   void _getFoods() async {
-    var url = Uri.parse('http://localhost:3000/api/products/bestseller');
+    var url = Uri.parse('http://10.0.2.2:3000/api/products/bestseller');
 
     var response = await http.get(url);
 

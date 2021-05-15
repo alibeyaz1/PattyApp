@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:PattyApp/animations/ScaleRoute.dart';
 import 'package:PattyApp/pages/FoodDetailsPage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../providerModels/product.dart';
 
 import 'package:http/http.dart' as http;
@@ -22,9 +23,13 @@ class _PopularFoodsWidgetState extends State<PopularFoodsWidget> {
   }
 
   void _getFoods() async {
-    var url = Uri.parse('http://localhost:3000/api/products');
+    final prefs = await SharedPreferences.getInstance();
 
-    var response = await http.get(url);
+    String token = prefs.get("token");
+
+    var url = Uri.parse('http://10.0.2.2:3000/api/products');
+
+    var response = await http.get(url, headers: {'token': token});
 
     final parsed =
         jsonDecode(response.body)['product'].cast<Map<String, dynamic>>();
@@ -114,12 +119,13 @@ class PopularFoodTiles extends StatelessWidget {
                         ],
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
                             alignment: Alignment.bottomLeft,
                             padding: EdgeInsets.only(left: 5, top: 5),
                             child: Text(name,
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: Color(0xFF6e6e71),
                                     fontSize: 15,
@@ -128,12 +134,13 @@ class PopularFoodTiles extends StatelessWidget {
                         ],
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
                             alignment: Alignment.bottomLeft,
                             padding: EdgeInsets.only(left: 5, top: 5, right: 5),
                             child: Text('\$' + price,
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: Color(0xFF6e6e71),
                                     fontSize: 12,

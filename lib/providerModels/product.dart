@@ -1,6 +1,7 @@
 class Product {
   final String id;
   final String seller;
+  final String sellerName;
   final String name;
   final String imagePath;
   final String category;
@@ -12,6 +13,7 @@ class Product {
   Product(
       {this.id,
       this.seller,
+      this.sellerName,
       this.name,
       this.imagePath,
       this.category,
@@ -24,6 +26,7 @@ class Product {
     return Product(
         id: json['_id'] as String,
         seller: json['seller'] as String,
+        sellerName: json['sellerName'] as String,
         name: json['name'] as String,
         imagePath: json['imagePath'] as String,
         category: json['category'] as String,

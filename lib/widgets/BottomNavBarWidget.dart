@@ -1,4 +1,5 @@
 import 'package:PattyApp/animations/ScaleRoute.dart';
+import 'package:PattyApp/pages/account.dart';
 import 'package:PattyApp/pages/home.dart';
 import 'package:PattyApp/pages/sellersPage.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +20,13 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
       setState(() {
         switch (index) {
           case 0:
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, ScaleRoute(page: Home()));
             break;
           case 1:
-            Navigator.push(context, ScaleRoute(page: SellersPage()));
+            Navigator.pushReplacement(context, ScaleRoute(page: SellersPage()));
+            break;
+          case 3:
+            Navigator.pushReplacement(context, ScaleRoute(page: AccountPage()));
             break;
           default:
         }

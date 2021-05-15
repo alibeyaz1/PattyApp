@@ -14,7 +14,7 @@ class Auth extends StatelessWidget {
   Future<String> _signupUser(LoginData data) async {
     print('Name: ${data.name}, Password: ${data.password}');
 
-    var url = Uri.parse('http://localhost:3000/api/auth/signup');
+    var url = Uri.parse('http://10.0.2.2:3000/api/auth/signup');
 
     var response = await http.post(url, body: {
       'username': "",
@@ -36,7 +36,7 @@ class Auth extends StatelessWidget {
   }
 
   Future<String> _loginUser(LoginData data) async {
-    var url = Uri.parse('http://localhost:3000/api/auth/login');
+    var url = Uri.parse('http://10.0.2.2:3000/api/auth/login');
 
     var response = await http.post(url, body: {
       'username': "",

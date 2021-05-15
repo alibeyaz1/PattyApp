@@ -1,3 +1,4 @@
+import 'package:PattyApp/pages/admin/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +41,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://localhost:3000/api/products/');
+    var url = Uri.parse('http://10.0.2.2:3000/api/products/');
 
     var response = await http.post(url, body: {
       'name': name,
@@ -53,7 +54,25 @@ class _MyCustomFormState extends State<MyCustomForm> {
       'token': token
     });
 
-    print(response.statusCode);
+    if (response.statusCode == 201) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MainScreen()));
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Success!'),
+          content: Text('Product added succesfully'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+            )
+          ],
+        ),
+      );
+    }
   }
 
   @override

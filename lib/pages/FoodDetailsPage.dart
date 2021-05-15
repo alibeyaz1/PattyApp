@@ -26,7 +26,7 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
   }
 
   _getProduct() async {
-    var url = Uri.parse('http://localhost:3000/api/products/${widget.id}');
+    var url = Uri.parse('http://10.0.2.2:3000/api/products/${widget.id}');
 
     var response = await http.get(url);
 
@@ -100,7 +100,7 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
                     FoodTitleWidget(
                         productName: this._product.name,
                         productPrice: this._product.price.toString(),
-                        productHost: this._product.seller),
+                        productHost: this._product.sellerName),
                     SizedBox(
                       height: 15,
                     ),
@@ -171,7 +171,7 @@ class FoodTitleWidget extends StatelessWidget {
                   fontWeight: FontWeight.w500),
             ),
             Text(
-              productPrice,
+              '\$ ${productPrice}',
               style: TextStyle(
                   fontSize: 20,
                   color: Color(0xFF3a3a3b),
