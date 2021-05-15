@@ -1,10 +1,10 @@
+import 'package:PattyApp/pages/admin/screens/dashboard/components/my_foods_cards.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
-import 'storage_info_card.dart';
 
-class StarageDetails extends StatelessWidget {
-  const StarageDetails({
+class MyFoods extends StatelessWidget {
+  const MyFoods({
     Key key,
   }) : super(key: key);
 
@@ -20,36 +20,28 @@ class StarageDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Storage Details",
+            "My Foods",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
             ),
           ),
           SizedBox(height: defaultPadding),
-          StorageInfoCard(
-            svgSrc: "assets/icons/Documents.svg",
+          MyFoodsCards(
             title: "Documents Files",
-            amountOfFiles: "1.3GB",
-            numOfFiles: 1327,
+            price: "1.3GB",
           ),
-          StorageInfoCard(
-            svgSrc: "assets/icons/media.svg",
+          MyFoodsCards(
             title: "Media Files",
-            amountOfFiles: "15.3GB",
-            numOfFiles: 1328,
+            price: "15.3GB",
           ),
-          StorageInfoCard(
-            svgSrc: "assets/icons/folder.svg",
+          MyFoodsCards(
             title: "Other Files",
-            amountOfFiles: "1.3GB",
-            numOfFiles: 1328,
+            price: "1.3GB",
           ),
-          StorageInfoCard(
-            svgSrc: "assets/icons/unknown.svg",
+          MyFoodsCards(
             title: "Unknown",
-            amountOfFiles: "1.3GB",
-            numOfFiles: 140,
+            price: "1.3GB",
           ),
         ],
       ),

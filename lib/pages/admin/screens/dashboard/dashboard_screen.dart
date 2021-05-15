@@ -1,10 +1,11 @@
+import 'package:PattyApp/pages/admin/screens/dashboard/components/recent_foods.dart';
+
 import '../../responsive.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import 'components/my_fiels.dart';
-import 'components/recent_files.dart';
-import 'components/storage_details.dart';
+import 'components/my_foods.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -24,10 +25,10 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       MyFiels(),
                       SizedBox(height: defaultPadding),
-                      RecentFiles(),
+                      RecentFoods(),
                       if (Responsive.isMobile(context))
                         SizedBox(height: defaultPadding),
-                      if (Responsive.isMobile(context)) StarageDetails(),
+                      if (Responsive.isMobile(context)) MyFoods(),
                     ],
                   ),
                 ),
@@ -37,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
                 if (!Responsive.isMobile(context))
                   Expanded(
                     flex: 2,
-                    child: StarageDetails(),
+                    child: MyFoods(),
                   ),
               ],
             )

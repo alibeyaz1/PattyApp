@@ -40,7 +40,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/products/');
+    var url = Uri.parse('http://localhost:3000/api/products/');
 
     var response = await http.post(url, body: {
       'name': name,
@@ -178,7 +178,10 @@ class _MyCustomFormState extends State<MyCustomForm> {
                   )
                 : TextButton(
                     child: Text("Send"),
-                    //color: Colors.red,
+                    style: TextButton.styleFrom(
+                      primary: Colors.white,
+                      backgroundColor: Color(0xFF52acff),
+                    ),
                     onPressed: () {
                       saveProduct();
                     }),

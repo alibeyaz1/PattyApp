@@ -1,18 +1,14 @@
+import 'package:PattyApp/pages/admin/constants.dart';
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
-
-class StorageInfoCard extends StatelessWidget {
-  const StorageInfoCard({
+class MyFoodsCards extends StatelessWidget {
+  const MyFoodsCards({
     Key key,
     @required this.title,
-    @required this.svgSrc,
-    @required this.amountOfFiles,
-    @required this.numOfFiles,
+    @required this.price,
   }) : super(key: key);
 
-  final String title, svgSrc, amountOfFiles;
-  final int numOfFiles;
+  final String title, price;
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +23,6 @@ class StorageInfoCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SizedBox(
-            height: 20,
-            width: 20,
-            child: Image.asset(svgSrc),
-          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
@@ -43,18 +34,11 @@ class StorageInfoCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    "$numOfFiles Files",
-                    style: Theme.of(context)
-                        .textTheme
-                        .caption
-                        .copyWith(color: Colors.white70),
-                  ),
                 ],
               ),
             ),
           ),
-          Text(amountOfFiles)
+          Text(price)
         ],
       ),
     );

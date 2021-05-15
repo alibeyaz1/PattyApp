@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
 
-class RecentFiles extends StatelessWidget {
-  const RecentFiles({
+class RecentFoods extends StatelessWidget {
+  const RecentFoods({
     Key key,
   }) : super(key: key);
 
@@ -30,13 +30,13 @@ class RecentFiles extends StatelessWidget {
               columnSpacing: defaultPadding,
               columns: [
                 DataColumn(
-                  label: Text("File Name"),
+                  label: Text("Costumer Name"),
                 ),
                 DataColumn(
                   label: Text("Date"),
                 ),
                 DataColumn(
-                  label: Text("Size"),
+                  label: Text("Price"),
                 ),
               ],
               rows: List.generate(
@@ -62,7 +62,7 @@ DataRow recentFileDataRow(RecentFile fileInfo) {
         ),
       ),
       DataCell(Text(fileInfo.date)),
-      DataCell(Text(fileInfo.size)),
+      DataCell(Text(fileInfo.price)),
     ],
   );
 }
