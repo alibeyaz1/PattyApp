@@ -4,7 +4,7 @@ class Product {
   final String name;
   final String imagePath;
   final String category;
-  final double price;
+  final dynamic price;
   final String description;
   final bool isWeight;
   final int sold;
@@ -27,7 +27,7 @@ class Product {
         name: json['name'] as String,
         imagePath: json['imagePath'] as String,
         category: json['category'] as String,
-        price: json['price'] as double,
+        price: (json['price'] as dynamic),
         description: json['description'] as String,
         isWeight: json['isWeight'] as bool,
         sold: json['sold'] as int);

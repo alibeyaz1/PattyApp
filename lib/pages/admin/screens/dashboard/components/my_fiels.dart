@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../add_food.dart';
 import '../../../models/MyFiles.dart';
 import '../../../responsive.dart';
@@ -126,9 +128,12 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       color: primaryColor,
     ));
 
+    final prefs = await SharedPreferences.getInstance();
+
+    String token = prefs.get("token");
     url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=all');
 
-    response = await http.get(url);
+    response = await http.get(url, headers: {'token': token});
 
     count = jsonDecode(response.body)['orderCount'];
     total = jsonDecode(response.body)['orderTotal'];

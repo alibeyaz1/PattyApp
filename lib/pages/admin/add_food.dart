@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class add_food extends StatelessWidget {
   @override
@@ -21,20 +23,50 @@ class MyCustomForm extends StatefulWidget {
 class _MyCustomFormState extends State<MyCustomForm> {
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
-  final _MyController = TextEditingController();
   String name = "";
   String _chosenValue;
+  bool isWeight = false;
+  String imageUrl = "";
+  String price = "";
+  String description = "";
+  bool isLoading = false;
+
+  saveProduct() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    String token = prefs.get("token");
+
+    var url = Uri.parse('http://10.0.2.2:3000/api/products/');
+
+    var response = await http.post(url, body: {
+      'name': name,
+      'category': _chosenValue,
+      'price': price,
+      'description': description,
+      'imageUrl': imageUrl,
+      'isWeight': isWeight.toString()
+    }, headers: {
+      'token': token
+    });
+
+    print(response.statusCode);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Text(name),
           Container(
             child: TextField(
-              controller: _MyController,
+              onChanged: (value) {
+                this.name = value;
+              },
               decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -47,7 +79,9 @@ class _MyCustomFormState extends State<MyCustomForm> {
           ),
           Container(
             child: TextField(
-              controller: _MyController,
+              onChanged: (value) {
+                this.imageUrl = value;
+              },
               decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -60,7 +94,10 @@ class _MyCustomFormState extends State<MyCustomForm> {
           ),
           Container(
             child: TextField(
-              controller: _MyController,
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                this.price = value;
+              },
               decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -72,49 +109,79 @@ class _MyCustomFormState extends State<MyCustomForm> {
             ),
           ),
           Container(
-              padding: const EdgeInsets.all(0.0),
-              child: DropdownButton<String>(
-                value: _chosenValue,
-                //elevation: 5,
-                style: TextStyle(color: Colors.black),
+            child: TextField(
+              onChanged: (value) {
+                this.description = value;
+              },
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                  hintText: "Description"),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(0.0),
+            child: DropdownButton<String>(
+              value: _chosenValue,
+              //elevation: 5,
+              style: TextStyle(color: Colors.black),
 
-                items: <String>[
-                  'Android',
-                  'IOS',
-                  'Flutter',
-                  'Node',
-                  'Java',
-                  'Python',
-                  'PHP',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                hint: Text(
-                  "Please choose a category",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600),
-                ),
-                onChanged: (String value) {
-                  setState(() {
-                    _chosenValue = value;
-                  });
-                },
-              )),
+              items: <String>[
+                'Android',
+                'IOS',
+                'Flutter',
+                'Node',
+                'Java',
+                'Python',
+                'PHP',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              hint: Text(
+                "Please choose a category",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
+              ),
+              onChanged: (String value) {
+                setState(() {
+                  _chosenValue = value;
+                });
+              },
+            ),
+          ),
+          Container(
+            child: CheckboxListTile(
+              value: this.isWeight,
+              subtitle: Text('Sold as weight'),
+              onChanged: (bool value) {
+                setState(() {
+                  this.isWeight = value;
+                });
+              },
+              activeColor: Theme.of(context).primaryColor,
+            ),
+          ),
           Container(
             width: double.infinity,
-            child: TextButton(
-                child: Text("Send"),
-                //color: Colors.red,
-                onPressed: () {
-                  setState(() {
-                    name = _MyController.text;
-                  });
-                }),
+            child: this.isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : TextButton(
+                    child: Text("Send"),
+                    //color: Colors.red,
+                    onPressed: () {
+                      saveProduct();
+                    }),
             padding: EdgeInsets.all(32),
           ),
         ],
