@@ -1,3 +1,4 @@
+import 'package:PattyApp/providerModels/order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../models/RecentFile.dart';
@@ -18,6 +19,7 @@ class RecentFoods extends StatefulWidget {
 
 class _RecentFoodsState extends State<RecentFoods> {
   List<dynamic> files = [];
+  List<Order> orders = [];
   bool isLoading = true;
 
   @override
@@ -34,13 +36,15 @@ class _RecentFoodsState extends State<RecentFoods> {
 
     var response = await http.get(url, headers: {'token': token});
 
-    dynamic orders = jsonDecode(response.body)['orders'];
+    final parsed =
+        jsonDecode(response.body)['orders'].cast<Map<String, dynamic>>();
+    orders = parsed.map<Order>((json) => Order.fromJson(json)).toList();
 
     for (var i = 0; i < orders.length; i++) {
       files.add(new RecentFile(
         title: orders[i].customerName,
-        date: orders[i].date,
-        price: orders[i].totalPrice,
+        date: orders[i].date.split('T')[0],
+        price: orders[i].totalPrice.toString(),
       ));
     }
 
@@ -65,7 +69,7 @@ class _RecentFoodsState extends State<RecentFoods> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Recent Foods",
+                  "Recent Orders",
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
                 SizedBox(

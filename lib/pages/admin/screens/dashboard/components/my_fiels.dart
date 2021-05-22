@@ -40,7 +40,8 @@ class MyFiels extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => add_food()),
+                  MaterialPageRoute(
+                      builder: (context) => add_food(isEdit: false)),
                 );
               },
               icon: Icon(Icons.add),

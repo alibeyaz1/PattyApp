@@ -1,3 +1,5 @@
+import 'package:PattyApp/animations/ScaleRoute.dart';
+import 'package:PattyApp/pages/SellerDetailsPage.dart';
 import 'package:PattyApp/providerModels/user.dart';
 import 'package:PattyApp/widgets/BottomNavBarWidget.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +63,10 @@ class _SellersPageState extends State<SellersPage> {
                       : [
                           for (var i in this.users)
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(context,
+                                    ScaleRoute(page: SellerDetailsPage(i.id)));
+                              },
                               child: Container(
                                 padding: EdgeInsets.all(20),
                                 decoration: BoxDecoration(

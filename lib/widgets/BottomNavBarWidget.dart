@@ -1,4 +1,5 @@
 import 'package:PattyApp/animations/ScaleRoute.dart';
+import 'package:PattyApp/pages/FoodOrderPage.dart';
 import 'package:PattyApp/pages/account.dart';
 import 'package:PattyApp/pages/home.dart';
 import 'package:PattyApp/pages/sellersPage.dart';
@@ -24,6 +25,10 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
             break;
           case 1:
             Navigator.pushReplacement(context, ScaleRoute(page: SellersPage()));
+            break;
+          case 2:
+            Navigator.pushReplacement(
+                context, ScaleRoute(page: FoodOrderPage()));
             break;
           case 3:
             Navigator.pushReplacement(context, ScaleRoute(page: AccountPage()));

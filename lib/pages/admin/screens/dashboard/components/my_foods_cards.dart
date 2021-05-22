@@ -1,3 +1,4 @@
+import 'package:PattyApp/pages/admin/add_food.dart';
 import 'package:PattyApp/pages/admin/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -6,9 +7,10 @@ class MyFoodsCards extends StatelessWidget {
     Key key,
     @required this.title,
     @required this.price,
+    @required this.id,
   }) : super(key: key);
 
-  final String title, price;
+  final String title, price, id;
 
   @override
   Widget build(BuildContext context) {
@@ -21,25 +23,37 @@ class MyFoodsCards extends StatelessWidget {
           Radius.circular(defaultPadding),
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+      child: InkWell(
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => add_food(
+                      isEdit: true,
+                      editId: id,
+                    )),
+          );
+        },
+        child: Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Text(price)
-        ],
+            Text(price)
+          ],
+        ),
       ),
     );
   }

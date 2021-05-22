@@ -69,7 +69,8 @@ class _MyFoodsState extends State<MyFoods> {
                 for (var i = 0; i < this.products.length; i++)
                   MyFoodsCards(
                       title: this.products[i].name,
-                      price: '\$ ${this.products[i].price}'),
+                      price: '\$ ${this.products[i].price}',
+                      id: this.products[i].id),
               ],
             ),
           );

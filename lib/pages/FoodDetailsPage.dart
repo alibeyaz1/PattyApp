@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:PattyApp/animations/ScaleRoute.dart';
 import 'package:PattyApp/pages/FoodOrderPage.dart';
+import 'package:PattyApp/providers/orderProvider.dart';
 import 'package:flutter/material.dart';
 import '../providerModels/product.dart';
 
@@ -64,7 +65,7 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
                         color: Color(0xFF3a3737),
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context, ScaleRoute(page: FoodOrderPage()));
                       })
                 ],
@@ -98,13 +99,15 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
               ),*/
 
                     FoodTitleWidget(
-                        productName: this._product.name,
-                        productPrice: this._product.price.toString(),
-                        productHost: this._product.sellerName),
+                      productName: this._product.name,
+                      productPrice: this._product.price.toString(),
+                      productHost: this._product.sellerName,
+                      isWeight: this._product.isWeight,
+                    ),
                     SizedBox(
                       height: 15,
                     ),
-                    AddToCartMenu(),
+                    AddToCartMenu(this._product),
                     SizedBox(
                       height: 15,
                     ),
@@ -148,12 +151,14 @@ class FoodTitleWidget extends StatelessWidget {
   String productName;
   String productPrice;
   String productHost;
+  bool isWeight;
 
   FoodTitleWidget({
     Key key,
     @required this.productName,
     @required this.productPrice,
     @required this.productHost,
+    @required this.isWeight,
   }) : super(key: key);
 
   @override
@@ -171,7 +176,7 @@ class FoodTitleWidget extends StatelessWidget {
                   fontWeight: FontWeight.w500),
             ),
             Text(
-              '\$ ${productPrice}',
+              '\$ ${productPrice} / ${isWeight ? 'kg' : 'pcs'}',
               style: TextStyle(
                   fontSize: 20,
                   color: Color(0xFF3a3a3b),
@@ -206,21 +211,18 @@ class FoodTitleWidget extends StatelessWidget {
 }
 
 class AddToCartMenu extends StatelessWidget {
+  Product _product;
+
+  AddToCartMenu(this._product);
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.remove),
-            color: Colors.black,
-            iconSize: 30,
-          ),
           InkWell(
             onTap: () {
-              Navigator.push(context, ScaleRoute(page: FoodOrderPage()));
+              Orders().addProduct(this._product, context);
             },
             child: Container(
               width: 200.0,
@@ -240,12 +242,6 @@ class AddToCartMenu extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.add),
-            color: Color(0xFFfd2c2c),
-            iconSize: 30,
           ),
         ],
       ),

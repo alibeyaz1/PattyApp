@@ -1,5 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:PattyApp/animations/ScaleRoute.dart';
+import 'package:PattyApp/pages/account.dart';
+import 'package:PattyApp/pages/home.dart';
+import 'package:PattyApp/providerModels/product.dart';
+import 'package:PattyApp/providers/orderProvider.dart';
+import 'package:PattyApp/widgets/BottomNavBarWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class FoodOrderPage extends StatefulWidget {
   @override
@@ -7,7 +18,16 @@ class FoodOrderPage extends StatefulWidget {
 }
 
 class _FoodOrderPageState extends State<FoodOrderPage> {
-  int counter = 3;
+  List<Product> order;
+  double total = 0;
+  @override
+  void initState() {
+    order = Orders().order;
+
+    for (var product in order) {
+      total += product.price;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +35,6 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
         appBar: AppBar(
           backgroundColor: Color(0xFFFAFAFA),
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Color(0xFF3a3737),
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
           title: Center(
             child: Text(
               "Item Carts",
@@ -33,9 +46,6 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
             ),
           ),
           brightness: Brightness.light,
-          actions: <Widget>[
-            CartIconWithBadge(),
-          ],
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -57,27 +67,11 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                 SizedBox(
                   height: 10,
                 ),
-                CartItem(
-                    productName: "Grilled Salmon",
-                    productPrice: "\$96.00",
-                    productImage: "ic_popular_food_1",
-                    productCartQuantity: "2"),
+                for (var product in order) CartItem(product: product),
                 SizedBox(
                   height: 10,
                 ),
-                CartItem(
-                    productName: "Meat vegetable",
-                    productPrice: "\$65.08",
-                    productImage: "ic_popular_food_4",
-                    productCartQuantity: "5"),
-                SizedBox(
-                  height: 10,
-                ),
-                PromoCodeWidget(),
-                SizedBox(
-                  height: 10,
-                ),
-                TotalCalculationWidget(),
+                TotalCalculationWidget(total),
                 SizedBox(
                   height: 10,
                 ),
@@ -95,59 +89,145 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                 SizedBox(
                   height: 10,
                 ),
-                PaymentMethodWidget(),
+                PaymentMethodWidget(order, total),
               ],
             ),
           ),
-        ));
+        ),
+        bottomNavigationBar: BottomNavBarWidget(2));
   }
 }
 
-class PaymentMethodWidget extends StatelessWidget {
+class PaymentMethodWidget extends StatefulWidget {
+  List<Product> order;
+  double total;
+
+  PaymentMethodWidget(this.order, this.total);
+
+  @override
+  _PaymentMethodWidgetState createState() => _PaymentMethodWidgetState();
+}
+
+class _PaymentMethodWidgetState extends State<PaymentMethodWidget> {
+  List<String> productIds = [];
+  bool isLoading = false;
+
+  void postOrder() async {
+    setState(() {
+      isLoading = true;
+    });
+    for (var item in widget.order) {
+      productIds.add(item.id);
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+
+    String token = prefs.get("token");
+
+    var url = Uri.parse('http://10.0.2.2:3000/api/orders');
+
+    final Map<String, dynamic> body = {
+      "seller": widget.order[0].seller,
+      "products": productIds,
+      "totalPrice": widget.total,
+    };
+
+    var response = await http.post(url, body: json.encode(body), headers: {
+      'token': token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+
+    if (response.statusCode < 300) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Home()));
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Success!'),
+          content: Text('Order created succesfully'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+            )
+          ],
+        ),
+      );
+    } else if (response.statusCode >= 400) {
+      final responseMessage = jsonDecode(response.body)['message'];
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => AccountPage()));
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Error!'),
+          content: Text(responseMessage),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+            )
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      height: 60,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Color(0xFFfae3e2).withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 1,
-          offset: Offset(0, 1),
-        ),
-      ]),
-      child: Card(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(5.0),
+    return InkWell(
+      onTap: postOrder,
+      child: Container(
+        alignment: Alignment.center,
+        width: double.infinity,
+        height: 60,
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Color(0xFFfae3e2).withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 1,
+            offset: Offset(0, 1),
           ),
-        ),
-        child: Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.only(left: 10, right: 30, top: 10, bottom: 10),
-          child: Row(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                child: Image.asset(
-                  "assets/images/menus/ic_credit_card.png",
-                  width: 50,
-                  height: 50,
+        ]),
+        child: Card(
+          color: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(5.0),
+            ),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(left: 10, right: 30, top: 10, bottom: 10),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    "assets/images/menus/ic_credit_card.png",
+                    width: 50,
+                    height: 50,
+                  ),
                 ),
-              ),
-              Text(
-                "Credit/Debit Card",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF3a3a3b),
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.left,
-              )
-            ],
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Text(
+                        "Pay with Credit/Debit Card",
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF3a3a3b),
+                            fontWeight: FontWeight.w400),
+                        textAlign: TextAlign.left,
+                      )
+              ],
+            ),
           ),
         ),
       ),
@@ -156,6 +236,9 @@ class PaymentMethodWidget extends StatelessWidget {
 }
 
 class TotalCalculationWidget extends StatelessWidget {
+  final double total;
+
+  TotalCalculationWidget(this.total);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -181,80 +264,25 @@ class TotalCalculationWidget extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           padding: EdgeInsets.only(left: 25, right: 30, top: 10, bottom: 10),
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              SizedBox(
-                height: 15,
+              Text(
+                "Total",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Color(0xFF3a3a3b),
+                    fontWeight: FontWeight.w600),
+                textAlign: TextAlign.left,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Grilled Salmon",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "\$192",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Meat vegetable",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "\$102",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.left,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Total",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "\$292",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.left,
-                  )
-                ],
-              ),
+              Text(
+                "\$${total}",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Color(0xFF3a3a3b),
+                    fontWeight: FontWeight.w600),
+                textAlign: TextAlign.left,
+              )
             ],
           ),
         ),
@@ -263,58 +291,10 @@ class TotalCalculationWidget extends StatelessWidget {
   }
 }
 
-class PromoCodeWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        padding: EdgeInsets.only(left: 3, right: 3),
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Color(0xFFfae3e2).withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: Offset(0, 1),
-          ),
-        ]),
-        child: TextFormField(
-          decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFe6e1e1), width: 1.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFFe6e1e1), width: 1.0),
-                  borderRadius: BorderRadius.circular(7)),
-              fillColor: Colors.white,
-              hintText: 'Add Your Promo Code',
-              filled: true,
-              suffixIcon: IconButton(
-                  icon: Icon(
-                    Icons.local_offer,
-                    color: Color(0xFFfd2c2c),
-                  ),
-                  onPressed: () {
-                    debugPrint('222');
-                  })),
-        ),
-      ),
-    );
-  }
-}
-
 class CartItem extends StatelessWidget {
-  String productName;
-  String productPrice;
-  String productImage;
-  String productCartQuantity;
+  Product product;
 
-  CartItem({
-    Key key,
-    @required this.productName,
-    @required this.productPrice,
-    @required this.productImage,
-    @required this.productCartQuantity,
-  }) : super(key: key);
+  CartItem({Key key, @required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -341,14 +321,15 @@ class CartItem extends StatelessWidget {
             alignment: Alignment.center,
             padding: EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Container(
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Center(
-                        child: Image.asset(
-                      "assets/images/popular_foods/$productImage.png",
+                        child: Image.network(
+                      product.imagePath,
                       width: 110,
                       height: 100,
                     )),
@@ -369,7 +350,7 @@ class CartItem extends StatelessWidget {
                           children: <Widget>[
                             Container(
                               child: Text(
-                                "$productName",
+                                product.name,
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Color(0xFF3a3a3b),
@@ -382,7 +363,7 @@ class CartItem extends StatelessWidget {
                             ),
                             Container(
                               child: Text(
-                                "$productPrice",
+                                "\$${product.price}",
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Color(0xFF3a3a3b),
@@ -395,119 +376,28 @@ class CartItem extends StatelessWidget {
                         SizedBox(
                           width: 40,
                         ),
-                        Container(
-                          alignment: Alignment.centerRight,
-                          child: Image.asset(
-                            "assets/images/menus/ic_delete.png",
-                            width: 25,
-                            height: 25,
+                        InkWell(
+                          onTap: () {
+                            Orders().removeProduct(product);
+                            Navigator.pushReplacement(
+                                context, ScaleRoute(page: FoodOrderPage()));
+                          },
+                          child: Container(
+                            alignment: Alignment.centerRight,
+                            child: Image.asset(
+                              "assets/images/menus/ic_delete.png",
+                              width: 25,
+                              height: 25,
+                            ),
                           ),
                         )
                       ],
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 20),
-                      alignment: Alignment.centerRight,
-                      child: AddToCartMenu(2),
-                    )
                   ],
                 )
               ],
             ),
           )),
-    );
-  }
-}
-
-class CartIconWithBadge extends StatelessWidget {
-  int counter = 3;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        IconButton(
-            icon: Icon(
-              Icons.business_center,
-              color: Color(0xFF3a3737),
-            ),
-            onPressed: () {}),
-        counter != 0
-            ? Positioned(
-                right: 11,
-                top: 11,
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 14,
-                    minHeight: 14,
-                  ),
-                  child: Text(
-                    '$counter',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 8,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            : Container()
-      ],
-    );
-  }
-}
-
-class AddToCartMenu extends StatelessWidget {
-  int productCounter;
-
-  AddToCartMenu(this.productCounter);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.remove),
-            color: Colors.black,
-            iconSize: 18,
-          ),
-          InkWell(
-            onTap: () => print('hello'),
-            child: Container(
-              width: 100.0,
-              height: 35.0,
-              decoration: BoxDecoration(
-                color: Color(0xFFfd2c2c),
-                border: Border.all(color: Colors.white, width: 2.0),
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              child: Center(
-                child: Text(
-                  'Add To $productCounter',
-                  style: new TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300),
-                ),
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.add),
-            color: Color(0xFFfd2c2c),
-            iconSize: 18,
-          ),
-        ],
-      ),
     );
   }
 }
