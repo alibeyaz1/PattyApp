@@ -1,5 +1,6 @@
 import 'package:PattyApp/animations/ScaleRoute.dart';
 import 'package:PattyApp/pages/auth.dart';
+import 'package:PattyApp/pages/my_orders.dart';
 import 'package:PattyApp/widgets/BottomNavBarWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -128,6 +129,12 @@ class _AccountPageState extends State<AccountPage> {
                 child: Column(
                   children: [
                     ...[
+                      RaisedButton(
+                        child: Text('My Orders'),
+                        onPressed: () {
+                          Navigator.push(context, ScaleRoute(page: MyOrders()));
+                        },
+                      ),
                       Text('Account Settings'),
                       TextFormField(
                         onChanged: (value) {

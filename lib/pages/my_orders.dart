@@ -1,25 +1,24 @@
 import 'package:PattyApp/animations/ScaleRoute.dart';
+import 'package:PattyApp/pages/admin/models/RecentFile.dart';
 import 'package:PattyApp/pages/admin/screens/order_detail.dart';
 import 'package:PattyApp/providerModels/order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../models/RecentFile.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../../../constants.dart';
+import 'package:PattyApp/pages/admin/constants.dart';
 
-class RecentFoods extends StatefulWidget {
-  const RecentFoods({
+class MyOrders extends StatefulWidget {
+  const MyOrders({
     Key key,
   }) : super(key: key);
 
   @override
-  _RecentFoodsState createState() => _RecentFoodsState();
+  _MyOrdersState createState() => _MyOrdersState();
 }
 
-class _RecentFoodsState extends State<RecentFoods> {
+class _MyOrdersState extends State<MyOrders> {
   List<dynamic> files = [];
   List<Order> orders = [];
   bool isLoading = true;
@@ -45,7 +44,7 @@ class _RecentFoodsState extends State<RecentFoods> {
     for (var i = 0; i < orders.length; i++) {
       files.add(new RecentFile(
         id: orders[i].id,
-        title: orders[i].customerName,
+        title: orders[i].sellerName,
         date: orders[i].date.split('T')[0],
         price: orders[i].totalPrice.toString(),
       ));
@@ -58,48 +57,51 @@ class _RecentFoodsState extends State<RecentFoods> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            padding: EdgeInsets.all(defaultPadding),
-            decoration: BoxDecoration(
-              color: secondaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Recent Orders",
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: DataTable(
-                    horizontalMargin: 0,
-                    columnSpacing: defaultPadding,
-                    columns: [
-                      DataColumn(
-                        label: Text("Costumer Name"),
+    return Scaffold(
+      appBar: AppBar(),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              padding: EdgeInsets.all(defaultPadding),
+              decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Recent Orders",
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: DataTable(
+                      horizontalMargin: 0,
+                      columnSpacing: defaultPadding,
+                      columns: [
+                        DataColumn(
+                          label: Text("Seller Name"),
+                        ),
+                        DataColumn(
+                          label: Text("Date"),
+                        ),
+                        DataColumn(
+                          label: Text("Price"),
+                        ),
+                      ],
+                      rows: List.generate(
+                        files.length,
+                        (index) => recentFileDataRow(files[index], context),
                       ),
-                      DataColumn(
-                        label: Text("Date"),
-                      ),
-                      DataColumn(
-                        label: Text("Price"),
-                      ),
-                    ],
-                    rows: List.generate(
-                      files.length,
-                      (index) => recentFileDataRow(files[index], context),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          );
+    );
   }
 }
 

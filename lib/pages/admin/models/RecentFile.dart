@@ -1,7 +1,7 @@
 class RecentFile {
-  final String title, date, price;
+  final String id, title, date, price;
 
-  RecentFile({this.title, this.date, this.price});
+  RecentFile({this.id, this.title, this.date, this.price});
 }
 
 List demoRecentFiles = [
