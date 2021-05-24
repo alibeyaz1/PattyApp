@@ -21,7 +21,7 @@ class _SellersPageState extends State<SellersPage> {
   }
 
   void _getUsers() async {
-    var url = Uri.parse('http://10.0.2.2:3000/api/auth/sellers');
+    var url = Uri.parse('http://localhost:3000/api/auth/sellers');
 
     var response = await http.get(url);
 

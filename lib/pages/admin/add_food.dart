@@ -52,17 +52,17 @@ class _MyCustomFormState extends State<MyCustomForm> {
   }
 
   getProduct() async {
-
     if (widget.isEdit) {
       setState(() {
-      isLoading = true;
-    });
-    
+        isLoading = true;
+      });
+
       final prefs = await SharedPreferences.getInstance();
 
       String token = prefs.get("token");
 
-      var url = Uri.parse('http://10.0.2.2:3000/api/products/${widget.editId}');
+      var url =
+          Uri.parse('http://localhost:3000/api/products/${widget.editId}');
 
       var response = await http.get(url, headers: {'token': token});
 
@@ -91,8 +91,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
     String token = prefs.get("token");
 
     var url = widget.isEdit
-        ? Uri.parse('http://10.0.2.2:3000/api/products/${widget.editId}')
-        : Uri.parse('http://10.0.2.2:3000/api/products/');
+        ? Uri.parse('http://localhost:3000/api/products/${widget.editId}')
+        : Uri.parse('http://localhost:3000/api/products/');
 
     var response = widget.isEdit
         ? await http.put(url, body: {
@@ -222,13 +222,13 @@ class _MyCustomFormState extends State<MyCustomForm> {
                     style: TextStyle(color: Colors.black),
 
                     items: <String>[
-                      'Android',
-                      'IOS',
-                      'Flutter',
-                      'Node',
-                      'Java',
-                      'Python',
-                      'PHP',
+                      'Fun Dinners',
+                      'Pasta',
+                      'Noudles',
+                      'BBQ',
+                      'Roast',
+                      'Chicken',
+                      'Soup',
                     ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,

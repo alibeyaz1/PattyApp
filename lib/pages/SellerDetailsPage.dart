@@ -32,13 +32,13 @@ class _SellerDetailsPageState extends State<SellerDetailsPage> {
   }
 
   _getSeller() async {
-    var url = Uri.parse('http://10.0.2.2:3000/api/auth/seller/${widget.id}');
+    var url = Uri.parse('http://localhost:3000/api/auth/seller/${widget.id}');
 
     var response = await http.get(url);
 
     seller = User.fromJson(jsonDecode(response.body)['seller']);
 
-    url = Uri.parse('http://10.0.2.2:3000/api/products/seller/${widget.id}');
+    url = Uri.parse('http://localhost:3000/api/products/seller/${widget.id}');
 
     response = await http.get(url);
 
@@ -46,7 +46,7 @@ class _SellerDetailsPageState extends State<SellerDetailsPage> {
         jsonDecode(response.body)['products'].cast<Map<String, dynamic>>();
     products = parsed.map<Product>((json) => Product.fromJson(json)).toList();
 
-    url = Uri.parse('http://10.0.2.2:3000/api/ratings/all/${widget.id}');
+    url = Uri.parse('http://localhost:3000/api/ratings/all/${widget.id}');
 
     response = await http.get(url);
 
@@ -296,7 +296,7 @@ class _ReviewContentMenuState extends State<ReviewContentMenu> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/ratings');
+    var url = Uri.parse('http://localhost:3000/api/ratings');
 
     var response = await http.post(url, body: {
       'seller': widget.id,

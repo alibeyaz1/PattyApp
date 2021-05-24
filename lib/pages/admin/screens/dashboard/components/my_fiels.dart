@@ -98,7 +98,7 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=daily');
+    var url = Uri.parse('http://localhost:3000/api/orders/count?filter=daily');
 
     var response = await http.get(url, headers: {'token': token});
 
@@ -112,7 +112,7 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       color: primaryColor,
     ));
 
-    url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=weekly');
+    url = Uri.parse('http://localhost:3000/api/orders/count?filter=weekly');
 
     response = await http.get(url, headers: {'token': token});
 
@@ -126,7 +126,7 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       color: primaryColor,
     ));
 
-    url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=monthly');
+    url = Uri.parse('http://localhost:3000/api/orders/count?filter=monthly');
 
     response = await http.get(url, headers: {'token': token});
 
@@ -140,7 +140,7 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       color: primaryColor,
     ));
 
-    url = Uri.parse('http://10.0.2.2:3000/api/orders/count?filter=all');
+    url = Uri.parse('http://localhost:3000/api/orders/count?filter=all');
 
     response = await http.get(url, headers: {'token': token});
 

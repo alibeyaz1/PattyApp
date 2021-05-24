@@ -27,7 +27,7 @@ class _PopularFoodsWidgetState extends State<PopularFoodsWidget> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/products');
+    var url = Uri.parse('http://localhost:3000/api/products');
 
     var response = await http.get(url, headers: {'token': token});
 

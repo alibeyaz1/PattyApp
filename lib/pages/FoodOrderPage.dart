@@ -124,7 +124,7 @@ class _PaymentMethodWidgetState extends State<PaymentMethodWidget> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/orders');
+    var url = Uri.parse('http://localhost:3000/api/orders');
 
     final Map<String, dynamic> body = {
       "seller": widget.order[0].seller,
@@ -138,6 +138,8 @@ class _PaymentMethodWidgetState extends State<PaymentMethodWidget> {
     });
 
     if (response.statusCode < 300) {
+      Orders().clearOrder();
+
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Home()));
       showDialog(

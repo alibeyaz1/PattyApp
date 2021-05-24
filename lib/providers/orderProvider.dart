@@ -12,6 +12,10 @@ class Orders {
     _order.remove(product);
   }
 
+  void clearOrder() {
+    _order = [];
+  }
+
   void addProduct(Product product, BuildContext context) {
     bool isSameSeller = true;
     for (var orderItem in _order) {

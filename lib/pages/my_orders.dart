@@ -33,7 +33,7 @@ class _MyOrdersState extends State<MyOrders> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/orders/');
+    var url = Uri.parse('http://localhost:3000/api/orders/');
 
     var response = await http.get(url, headers: {'token': token});
 

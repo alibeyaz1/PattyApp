@@ -30,7 +30,7 @@ class _MyFoodsState extends State<MyFoods> {
     final prefs = await SharedPreferences.getInstance();
 
     String token = prefs.get("token");
-    var url = Uri.parse('http://10.0.2.2:3000/api/products');
+    var url = Uri.parse('http://localhost:3000/api/products');
 
     var response = await http.get(url, headers: {'token': token});
 

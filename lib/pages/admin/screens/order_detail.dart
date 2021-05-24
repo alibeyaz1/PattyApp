@@ -24,14 +24,14 @@ class _OrderDetailState extends State<OrderDetail> {
   }
 
   getOrder() async {
-    var url = Uri.parse('http://10.0.2.2:3000/api/orders/${widget.orderId}');
+    var url = Uri.parse('http://localhost:3000/api/orders/${widget.orderId}');
 
     var response = await http.get(url);
 
     order = Order.fromJson(jsonDecode(response.body)['order']);
 
     for (var productId in order.products) {
-      url = Uri.parse('http://10.0.2.2:3000/api/products/${productId}');
+      url = Uri.parse('http://localhost:3000/api/products/${productId}');
 
       var response = await http.get(url);
 

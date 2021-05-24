@@ -27,7 +27,7 @@ class _FoodDetailsPageState extends State<FoodDetailsPage> {
   }
 
   _getProduct() async {
-    var url = Uri.parse('http://10.0.2.2:3000/api/products/${widget.id}');
+    var url = Uri.parse('http://localhost:3000/api/products/${widget.id}');
 
     var response = await http.get(url);
 

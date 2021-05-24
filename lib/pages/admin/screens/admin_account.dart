@@ -21,7 +21,7 @@ class _AdminAccountPageState extends State<AdminAccountPage> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/auth/change-name');
+    var url = Uri.parse('http://localhost:3000/api/auth/change-name');
 
     var response = await http.put(url, body: {
       'name': newName,
@@ -53,7 +53,7 @@ class _AdminAccountPageState extends State<AdminAccountPage> {
 
     String token = prefs.get("token");
 
-    var url = Uri.parse('http://10.0.2.2:3000/api/auth/newPass');
+    var url = Uri.parse('http://localhost:3000/api/auth/newPass');
 
     var response = await http.put(url, body: {
       'oldPass': oldPass,
